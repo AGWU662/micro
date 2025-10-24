@@ -73,6 +73,7 @@ app.use('/api/mining', require('./routes/mining'));
 app.use('/api/trading', require('./routes/trading'));
 app.use('/api/p2p', require('./routes/p2p'));
 app.use('/api/transactions', require('./routes/transactions'));
+app.use('/api/newsletter', require('./routes/newsletter'));
 
 // Welcome route
 app.get('/api', (req, res) => {
