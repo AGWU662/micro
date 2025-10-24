@@ -4,19 +4,14 @@ const Trade = require('../models/Trade');
 const Wallet = require('../models/Wallet');
 const Transaction = require('../models/Transaction');
 const { protect } = require('../middleware/auth');
+const priceService = require('../utils/priceService');
 
 // @route   GET /api/trading/pairs
 // @desc    Get available trading pairs
 // @access  Public
 router.get('/pairs', async (req, res) => {
   try {
-    const pairs = [
-      { pair: 'BTC/USDT', base: 'BTC', quote: 'USDT', price: 43250.50, change24h: 2.5 },
-      { pair: 'ETH/USDT', base: 'ETH', quote: 'USDT', price: 2280.75, change24h: 3.2 },
-      { pair: 'BTC/ETH', base: 'BTC', quote: 'ETH', price: 18.95, change24h: -0.8 },
-      { pair: 'LTC/USDT', base: 'LTC', quote: 'USDT', price: 72.40, change24h: 1.5 },
-      { pair: 'XRP/USDT', base: 'XRP', quote: 'USDT', price: 0.5234, change24h: 4.2 }
-    ];
+    const pairs = priceService.getTradingPairs();
 
     res.status(200).json({
       success: true,

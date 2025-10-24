@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
+const priceService = require('./utils/priceService');
 
 // Load environment variables
 dotenv.config();
@@ -56,6 +57,15 @@ mongoose.connect(process.env.MONGO_URI, {
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
   
+  // Send current prices to new client
+  socket.emit('priceUpdate', priceService.getCurrentPrices());
+  
+  // Handle user joining their room for notifications
+  socket.on('join', (room) => {
+    socket.join(room);
+    console.log(`Client ${socket.id} joined room: ${room}`);
+  });
+  
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);
   });
@@ -63,6 +73,9 @@ io.on('connection', (socket) => {
 
 // Make io accessible to routes
 app.set('io', io);
+
+// Start price monitoring service
+priceService.startPriceMonitoring(io);
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -73,6 +86,7 @@ app.use('/api/mining', require('./routes/mining'));
 app.use('/api/trading', require('./routes/trading'));
 app.use('/api/p2p', require('./routes/p2p'));
 app.use('/api/transactions', require('./routes/transactions'));
+app.use('/api/kyc', require('./routes/kyc'));
 
 // Welcome route
 app.get('/api', (req, res) => {
