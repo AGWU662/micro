@@ -10,8 +10,8 @@ This is a comprehensive **cryptocurrency trading platform** built with Node.js, 
 - **Authentication**: JWT (JSON Web Tokens) with bcryptjs for password hashing
 - **Validation**: express-validator (v7.0.1)
 - **Security**: Helmet, CORS, express-rate-limit
-- **File Uploads**: Multer
-- **Email**: Nodemailer
+- **File Uploads**: Multer (v2.0.2)
+- **Email**: Nodemailer (v7.0.10)
 
 ## Project Structure
 ```
@@ -210,3 +210,10 @@ When writing tests (if needed):
 6. Use meaningful variable and function names
 7. Add comments for complex logic only
 8. Keep functions focused and single-purpose
+
+## Security Updates
+- Dependencies updated to secure versions:
+  - Multer: v2.0.2 (fixes multiple vulnerabilities)
+  - Nodemailer: v7.0.10 (fixes email domain vulnerability)
+- API keys and secrets properly secured in environment variables
+- Comprehensive .gitignore for Node.js projects

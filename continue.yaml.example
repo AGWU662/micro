@@ -1,0 +1,21 @@
+# Continue.dev Configuration File Example
+# Copy this file to continue.yaml and configure with your settings
+# Reference: https://docs.continue.dev/reference
+
+models:
+  - name: ollama-default
+    provider: ollama
+    # 'default' refers to the default model configured in your Ollama instance.
+    # Change the baseUrl below if your Ollama server is running on a different host or port.
+    # For remote Ollama instances, replace 'localhost' with the server's IP or hostname.
+    baseUrl: http://localhost:11434
+    model: default
+
+# Cloud models (optional)
+# - name: claude-sonnet
+#   provider: anthropic
+#   model: claude-3-sonnet-20240229
+#   apiKey: YOUR_ANTHROPIC_API_KEY_HERE
+
+# Set default model
+model: ollama-default
