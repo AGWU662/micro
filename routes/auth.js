@@ -5,6 +5,7 @@ const User = require('../models/User');
 const Wallet = require('../models/Wallet');
 const { sendTokenResponse } = require('../utils/jwt');
 const { protect } = require('../middleware/auth');
+const emailService = require('../utils/emailService');
 
 // @route   POST /api/auth/register
 // @desc    Register new user
@@ -75,10 +76,31 @@ router.post('/register', [
       ]
     });
 
-    // Send welcome email (implement later)
-    // await sendWelcomeEmail(user);
+    // Send welcome email to user
+    try {
+      await emailService.sendWelcomeEmail(user.email, `${user.firstName} ${user.lastName}`);
+    } catch (emailError) {
+      console.error('Failed to send welcome email:', emailError);
+      // Don't fail registration if email fails
+    }
 
-    sendTokenResponse(user, 201, res, 'Registration successful');
+    // Send admin notification
+    try {
+      await emailService.sendAdminNotification({
+        _id: user._id,
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+        country: user.country,
+        phone: user.phone,
+        registrationDate: user.createdAt,
+        kyc: user.kyc
+      });
+    } catch (emailError) {
+      console.error('Failed to send admin notification:', emailError);
+      // Don't fail registration if email fails
+    }
+
+    sendTokenResponse(user, 201, res, 'Registration successful - Welcome email sent!');
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({

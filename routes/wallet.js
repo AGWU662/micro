@@ -3,6 +3,7 @@ const router = express.Router();
 const Wallet = require('../models/Wallet');
 const Transaction = require('../models/Transaction');
 const { protect } = require('../middleware/auth');
+const emailService = require('../utils/emailService');
 
 // @route   GET /api/wallet
 // @desc    Get user wallet

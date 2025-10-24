@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import LiveChat from '../LiveChat';
 import './DashboardLayout.css';
 
 const DashboardLayout = ({ children }) => {
@@ -29,8 +30,8 @@ const DashboardLayout = ({ children }) => {
       <nav className="dashboard-nav">
         <div className="nav-left">
           <Link to="/" className="nav-logo">
-            <span className="logo-icon">₿</span>
-            CryptoTrader
+            <span className="logo-icon">⛏️</span>
+            Elite-cloud Mining
           </Link>
         </div>
         
@@ -93,6 +94,9 @@ const DashboardLayout = ({ children }) => {
           </div>
         </main>
       </div>
+      
+      {/* Live Chat Widget */}
+      <LiveChat />
     </div>
   );
 };

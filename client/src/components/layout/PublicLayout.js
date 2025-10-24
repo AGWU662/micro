@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import LiveChat from '../LiveChat';
 import './PublicLayout.css';
 
 const PublicLayout = ({ children }) => {
@@ -11,8 +12,8 @@ const PublicLayout = ({ children }) => {
       <nav className="navbar">
         <div className="nav-container">
           <Link to="/" className="nav-logo">
-            <span className="logo-icon">₿</span>
-            CryptoTrader
+            <span className="logo-icon">⛏️</span>
+            Elite-cloud Mining
           </Link>
           
           <div className="nav-menu">
@@ -49,8 +50,8 @@ const PublicLayout = ({ children }) => {
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-section">
-            <h3>CryptoTrader</h3>
-            <p>Your trusted cryptocurrency trading platform with advanced features and secure transactions.</p>
+            <h3>Elite-cloud Mining</h3>
+            <p>Your trusted cloud mining and cryptocurrency platform with P2P trading, crypto loans, and secure mining solutions.</p>
             <div className="social-links">
               <a href="#" className="social-link">Twitter</a>
               <a href="#" className="social-link">Telegram</a>
@@ -84,9 +85,12 @@ const PublicLayout = ({ children }) => {
         </div>
         
         <div className="footer-bottom">
-          <p>&copy; 2024 CryptoTrader. All rights reserved.</p>
+          <p>&copy; 2024 Elite-cloud Mining Company (coinscloud.net). All rights reserved.</p>
         </div>
       </footer>
+      
+      {/* Live Chat Widget */}
+      <LiveChat />
     </div>
   );
 };
