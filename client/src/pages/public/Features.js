@@ -1,5 +1,5 @@
 import React from 'react';
-import './FeaturesPage.css';
+import './Features.css';
 
 const FeaturesPage = () => {
   const features = [
