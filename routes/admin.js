@@ -7,6 +7,7 @@ const { MiningPlan, MiningInvestment } = require('../models/Mining');
 const Trade = require('../models/Trade');
 const { P2POffer, P2PTrade } = require('../models/P2PTrade');
 const { protect, isAdmin } = require('../middleware/auth');
+const { sendKYCStatusEmail, sendTransactionEmail } = require('../utils/emailService');
 
 // Apply admin middleware to all routes
 router.use(protect);
@@ -48,6 +49,11 @@ router.get('/dashboard', async (req, res) => {
       .sort('-createdAt')
       .limit(10);
 
+    const recentUsers = await User.find({ role: 'user' })
+      .select('firstName lastName email createdAt isVerified kycStatus')
+      .sort('-createdAt')
+      .limit(10);
+
     res.status(200).json({
       success: true,
       stats: {
@@ -68,7 +74,8 @@ router.get('/dashboard', async (req, res) => {
         },
         platformBalance: totalBalance
       },
-      recentTransactions
+      recentTransactions,
+      recentUsers
     });
   } catch (error) {
     res.status(500).json({
@@ -223,6 +230,18 @@ router.put('/user/:id/kyc', async (req, res) => {
       });
     }
 
+    // Send KYC status email notification
+    sendKYCStatusEmail(user, kycStatus).catch(err => console.error('Email error:', err));
+
+    // Emit Socket.io event for real-time notification
+    const io = req.app.get('io');
+    if (io) {
+      io.emit(`kyc_status_${user._id}`, {
+        status: kycStatus,
+        message: `Your KYC verification has been ${kycStatus}`
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: 'KYC status updated successfully',
@@ -317,6 +336,24 @@ router.put('/transaction/:id/approve', async (req, res) => {
     transaction.processingNote = note;
     transaction.completedAt = Date.now();
     await transaction.save();
+
+    // Send transaction notification email
+    sendTransactionEmail(transaction.user, transaction).catch(err => console.error('Email error:', err));
+
+    // Emit Socket.io event for real-time notification
+    const io = req.app.get('io');
+    if (io) {
+      io.emit(`transaction_${transaction.user._id}`, {
+        type: 'transaction_completed',
+        transaction: {
+          id: transaction._id,
+          type: transaction.type,
+          amount: transaction.amount,
+          currency: transaction.currency,
+          status: transaction.status
+        }
+      });
+    }
 
     res.status(200).json({
       success: true,
