@@ -7,6 +7,7 @@ const { MiningPlan, MiningInvestment } = require('../models/Mining');
 const Trade = require('../models/Trade');
 const { P2POffer, P2PTrade } = require('../models/P2PTrade');
 const { protect, isAdmin } = require('../middleware/auth');
+const emailService = require('../utils/emailService');
 
 // Apply admin middleware to all routes
 router.use(protect);
@@ -318,9 +319,25 @@ router.put('/transaction/:id/approve', async (req, res) => {
     transaction.completedAt = Date.now();
     await transaction.save();
 
+    // Send transaction receipt email
+    try {
+      await emailService.sendTransactionReceipt(transaction.user.email, {
+        _id: transaction._id,
+        type: transaction.type,
+        amount: transaction.amount,
+        currency: transaction.currency,
+        status: transaction.status,
+        fee: transaction.fee || 0,
+        txHash: transaction.txHash
+      });
+    } catch (emailError) {
+      console.error('Failed to send transaction receipt:', emailError);
+      // Don't fail the transaction if email fails
+    }
+
     res.status(200).json({
       success: true,
-      message: 'Transaction approved successfully',
+      message: 'Transaction approved successfully - Receipt sent to user',
       transaction
     });
   } catch (error) {

@@ -19,3 +19,24 @@ gradle-app.setting
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+# Node
+node_modules
+node_modules/
+**/node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Build and cache
+**/node_modules/.cache/
+**/.cache/
+build/
+dist/
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
