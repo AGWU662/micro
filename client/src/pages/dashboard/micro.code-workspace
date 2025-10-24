@@ -1,0 +1,48 @@
+{
+	"folders": [
+		{
+			"path": "../../../.."
+		},
+		{
+			"path": "../../../../.github"
+		}
+	],
+	"settings": {
+		"chat.mcp.discovery.enabled": {
+			"claude-desktop": true,
+			"windsurf": true,
+			"cursor-workspace": true,
+			"cursor-global": true
+		},
+		"chat.mcp.assisted.nuget.enabled": true,
+		"terminal.integrated.shellIntegration.enabled": true,
+		"extensions.experimental.deferredStartupFinishedActivation": true,
+		"files.autoSave": "afterDelay",
+		"editor.defaultFormatter": "GitHub.copilot",
+		"editor.wordWrap": "on",
+		"editor.formatOnPaste": true,
+		"editor.aiStats.enabled": true,
+		"editor.allowVariableFontsInAccessibilityMode": true,
+		"editor.autoClosingDelete": "always",
+		"editor.autoClosingOvertype": "always",
+		"editor.autoIndentOnPaste": true,
+		"editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+		"editor.inlineSuggest.edits.showCollapsed": true,
+		"editor.suggest.shareSuggestSelections": true,
+		"files.simpleDialog.enable": false,
+		"workbench.commandPalette.experimental.suggestCommands": true,
+		"workbench.commandPalette.preserveInput": true,
+		"workbench.experimental.share.enabled": true,
+		"testing.automaticallyOpenPeekViewDuringAutoRun": true,
+		"testing.automaticallyOpenPeekView": "failureAnywhere",
+		"testing.alwaysRevealTestOnStateChange": true,
+		"testing.showAllMessages": true,
+		"task.notifyWindowOnTaskCompletion": 600000,
+		"task.quickOpen.history": 30,
+		"task.quickOpen.showAll": true,
+		"problems.showCurrentInStatus": true,
+		"remote.downloadExtensionsLocally": true,
+		"terminal.integrated.accessibleViewFocusOnCommandExecution": true,
+		"terminal.integrated.accessibleViewPreserveCursorPosition": true
+	}
+}
