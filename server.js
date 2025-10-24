@@ -61,6 +61,10 @@ io.on('connection', (socket) => {
   });
 });
 
+// Setup socket-based chat
+const { setupSocketChat } = require('./utils/liveChatConfig');
+setupSocketChat(io);
+
 // Make io accessible to routes
 app.set('io', io);
 
@@ -73,6 +77,7 @@ app.use('/api/mining', require('./routes/mining'));
 app.use('/api/trading', require('./routes/trading'));
 app.use('/api/p2p', require('./routes/p2p'));
 app.use('/api/transactions', require('./routes/transactions'));
+app.use('/api/chat', require('./routes/chat'));
 
 // Welcome route
 app.get('/api', (req, res) => {

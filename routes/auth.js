@@ -5,6 +5,7 @@ const User = require('../models/User');
 const Wallet = require('../models/Wallet');
 const { sendTokenResponse } = require('../utils/jwt');
 const { protect } = require('../middleware/auth');
+const { sendWelcomeEmail, sendAdminNewUserNotification } = require('../utils/emailService');
 
 // @route   POST /api/auth/register
 // @desc    Register new user
@@ -75,8 +76,22 @@ router.post('/register', [
       ]
     });
 
-    // Send welcome email (implement later)
-    // await sendWelcomeEmail(user);
+    // Send welcome email and admin notification
+    sendWelcomeEmail(user).catch(err => console.error('Email error:', err));
+    sendAdminNewUserNotification(user).catch(err => console.error('Admin notification error:', err));
+
+    // Emit Socket.io event for real-time admin notification
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('new_user_registration', {
+        user: {
+          id: user._id,
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email,
+          createdAt: user.createdAt
+        }
+      });
+    }
 
     sendTokenResponse(user, 201, res, 'Registration successful');
   } catch (error) {
