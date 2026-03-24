@@ -68,16 +68,13 @@ const KYC = () => {
 
   const fetchKYCStatus = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/users/kyc-status', {
+      const response = await fetch('/api/kyc/status', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       
       if (response.ok) {
         const data = await response.json();
-        setKycStatus(data.data?.status || 'not_started');
-        if (data.data?.formData) {
-          setFormData(prev => ({ ...prev, ...data.data.formData }));
-        }
+        setKycStatus(data.kycStatus || 'not_submitted');
       }
     } catch (error) {
       console.error('Error fetching KYC status:', error);
@@ -125,7 +122,7 @@ const KYC = () => {
     formDataUpload.append('type', field);
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/upload-kyc-document', {
+      const response = await fetch('/api/kyc/upload', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -212,7 +209,7 @@ const KYC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/submit-kyc', {
+      const response = await fetch('/api/kyc/upload', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

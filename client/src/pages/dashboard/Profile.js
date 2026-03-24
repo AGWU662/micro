@@ -52,7 +52,9 @@ const Profile = () => {
       }));
       
       if (user.avatar) {
-        setAvatarPreview(`http://localhost:5000${user.avatar}`);
+        // Ensure avatar has a leading slash for relative paths
+        const avatarUrl = user.avatar.startsWith('http') ? user.avatar : user.avatar;
+        setAvatarPreview(avatarUrl);
       }
     }
   }, [user]);
@@ -71,7 +73,7 @@ const Profile = () => {
         formData.append('avatar', avatar);
       }
 
-      const response = await fetch('http://localhost:5000/api/users/profile', {
+      const response = await fetch('/api/auth/update-profile', {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -105,7 +107,7 @@ const Profile = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/change-password', {
+      const response = await fetch('/api/auth/change-password', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -142,7 +144,7 @@ const Profile = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/notifications', {
+      const response = await fetch('/api/users/notifications', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -186,7 +188,7 @@ const Profile = () => {
 
   const toggle2FA = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/users/toggle-2fa', {
+      const response = await fetch('/api/users/toggle-2fa', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

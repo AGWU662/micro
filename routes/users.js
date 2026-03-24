@@ -93,4 +93,76 @@ router.get('/stats', protect, async (req, res) => {
   }
 });
 
+// @route   PUT /api/users/notifications
+// @desc    Update user notification settings
+// @access  Private
+router.put('/notifications', protect, async (req, res) => {
+  try {
+    const { emailNotifications, pushNotifications, tradeAlerts, priceAlerts } = req.body;
+
+    // Validate boolean fields
+    const boolFields = { emailNotifications, pushNotifications, tradeAlerts, priceAlerts };
+    for (const [key, val] of Object.entries(boolFields)) {
+      if (val !== undefined && typeof val !== 'boolean') {
+        return res.status(400).json({
+          success: false,
+          message: `${key} must be a boolean value`
+        });
+      }
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        $set: {
+          'notifications.email': emailNotifications,
+          'notifications.push': pushNotifications,
+          'notifications.tradeAlerts': tradeAlerts,
+          'notifications.priceAlerts': priceAlerts,
+        }
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Notification settings updated successfully',
+      user
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+});
+
+// @route   POST /api/users/toggle-2fa
+// @desc    Toggle two-factor authentication
+// @access  Private
+router.post('/toggle-2fa', protect, async (req, res) => {
+  try {
+    const { enabled } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { twoFactorEnabled: !!enabled },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: `Two-factor authentication ${enabled ? 'enabled' : 'disabled'} successfully`,
+      twoFactorEnabled: user.twoFactorEnabled
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

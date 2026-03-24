@@ -7,7 +7,7 @@ class SocketService {
   }
 
   connect() {
-    const socketUrl = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
+    const socketUrl = process.env.REACT_APP_SOCKET_URL || window.location.origin;
     
     this.socket = io(socketUrl, {
       transports: ['websocket'],
