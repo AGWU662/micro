@@ -5,7 +5,7 @@ const User = require('../models/User');
 const Wallet = require('../models/Wallet');
 const { sendTokenResponse } = require('../utils/jwt');
 const { protect } = require('../middleware/auth');
-const emailService = require('../utils/emailService');
+const { sendWelcomeEmail, sendAdminNewUserNotification } = require('../utils/emailService');
 
 // @route   POST /api/auth/register
 // @desc    Register new user
