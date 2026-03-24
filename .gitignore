@@ -22,14 +22,29 @@ Thumbs.db
 *.swp
 *.swo
 
-# Build
-dist/
+# Eclipse Gradle plugin generated files
+# Eclipse Core
+.project
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
+
+# Node
+node_modules
+node_modules/
+**/node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Build and cache
+**/node_modules/.cache/
+**/.cache/
 build/
+dist/
 
-# Uploads
-uploads/*
-!uploads/.gitkeep
-
-# Temporary files
-tmp/
-temp/
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

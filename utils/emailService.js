@@ -1,336 +1,358 @@
 const nodemailer = require('nodemailer');
 
-// Create reusable transporter
-const createTransporter = () => {
-  // Check if email configuration is available
-  if (!process.env.EMAIL_HOST || !process.env.EMAIL_USER) {
-    console.warn('⚠️  Email configuration not found. Email notifications disabled.');
-    return null;
+class EmailService {
+  constructor() {
+    this.transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+      port: process.env.EMAIL_PORT || 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
   }
 
-  return nodemailer.createTransporter({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT || 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD
-    }
-  });
-};
-
-// Send welcome email to new user
-exports.sendWelcomeEmail = async (user) => {
-  try {
-    const transporter = createTransporter();
-    if (!transporter) return false;
-
+  // Send welcome email to new user
+  async sendWelcomeEmail(userEmail, userName) {
     const mailOptions = {
-      from: `"${process.env.PLATFORM_NAME || 'Crypto Platform'}" <${process.env.EMAIL_USER}>`,
-      to: user.email,
-      subject: 'Welcome to Elite-Cloud Mining Company! 🚀',
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-            .button { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
-            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
-            .highlight { background: #fff; padding: 15px; border-left: 4px solid #667eea; margin: 20px 0; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>Welcome to Elite-Cloud Mining! 🎉</h1>
-            </div>
-            <div class="content">
-              <h2>Hello ${user.firstName} ${user.lastName}!</h2>
-              <p>Thank you for joining Elite-Cloud Mining Company, the premier cryptocurrency trading and mining platform.</p>
-              
-              <div class="highlight">
-                <strong>Your account has been successfully created!</strong><br>
-                Email: ${user.email}<br>
-                Referral Code: ${user.referralCode}
-              </div>
-
-              <h3>What's Next?</h3>
-              <ul>
-                <li>✅ Complete your KYC verification</li>
-                <li>💰 Claim your welcome bonus (1000 USDT)</li>
-                <li>⛏️ Start mining with our cloud mining plans</li>
-                <li>📈 Trade cryptocurrencies with ease</li>
-                <li>🤝 Earn from P2P trading</li>
-              </ul>
-
-              <p style="text-align: center;">
-                <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/dashboard" class="button">
-                  Go to Dashboard
-                </a>
-              </p>
-
-              <p>If you have any questions, our 24/7 support team is here to help via live chat!</p>
-
-              <p>Best regards,<br>
-              <strong>The Elite-Cloud Mining Team</strong></p>
-            </div>
-            <div class="footer">
-              <p>© ${new Date().getFullYear()} Elite-Cloud Mining Company. All rights reserved.</p>
-              <p>This is an automated message, please do not reply to this email.</p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `
+      from: `"Elite-cloud Mining" <${process.env.EMAIL_USER}>`,
+      to: userEmail,
+      subject: 'Welcome to Elite-cloud Mining - Account Created Successfully',
+      html: this.getWelcomeEmailTemplate(userName, userEmail)
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ Welcome email sent to ${user.email}`);
-    return true;
-  } catch (error) {
-    console.error('❌ Error sending welcome email:', error.message);
-    return false;
+    try {
+      await this.transporter.sendMail(mailOptions);
+      console.log('Welcome email sent successfully to:', userEmail);
+    } catch (error) {
+      console.error('Error sending welcome email:', error);
+      throw error;
+    }
   }
-};
 
-// Send admin notification for new user registration
-exports.sendAdminNewUserNotification = async (user) => {
-  try {
-    const transporter = createTransporter();
-    if (!transporter) return false;
-
+  // Send admin notification when new user registers
+  async sendAdminNotification(userDetails) {
     const adminEmail = process.env.ADMIN_EMAIL;
     if (!adminEmail) {
-      console.warn('⚠️  Admin email not configured');
-      return false;
+      console.warn('Admin email not configured');
+      return;
     }
 
     const mailOptions = {
-      from: `"${process.env.PLATFORM_NAME || 'Crypto Platform'}" <${process.env.EMAIL_USER}>`,
+      from: `"Elite-cloud Mining System" <${process.env.EMAIL_USER}>`,
       to: adminEmail,
-      subject: '🆕 New User Registration Alert',
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #2c3e50; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
-            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-            .info-table { width: 100%; background: white; border-collapse: collapse; margin: 20px 0; }
-            .info-table td { padding: 12px; border-bottom: 1px solid #ddd; }
-            .info-table td:first-child { font-weight: bold; width: 40%; }
-            .button { display: inline-block; padding: 12px 30px; background: #2c3e50; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h2>🆕 New User Registration</h2>
-            </div>
-            <div class="content">
-              <p>A new user has registered on the platform:</p>
-              
-              <table class="info-table">
-                <tr>
-                  <td>Name</td>
-                  <td>${user.firstName} ${user.lastName}</td>
-                </tr>
-                <tr>
-                  <td>Email</td>
-                  <td>${user.email}</td>
-                </tr>
-                <tr>
-                  <td>Phone</td>
-                  <td>${user.phone || 'Not provided'}</td>
-                </tr>
-                <tr>
-                  <td>Country</td>
-                  <td>${user.country || 'Not provided'}</td>
-                </tr>
-                <tr>
-                  <td>Referral Code</td>
-                  <td>${user.referralCode}</td>
-                </tr>
-                <tr>
-                  <td>Registration Date</td>
-                  <td>${new Date(user.createdAt).toLocaleString()}</td>
-                </tr>
-              </table>
-
-              <p style="text-align: center;">
-                <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/admin/users/${user._id}" class="button">
-                  View User Profile
-                </a>
-              </p>
-
-              <p style="color: #666; font-size: 12px;">
-                This is an automated notification from the Elite-Cloud Mining platform.
-              </p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `
+      subject: 'New User Registration - Elite-cloud Mining',
+      html: this.getAdminNotificationTemplate(userDetails)
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ Admin notification sent for new user: ${user.email}`);
-    return true;
-  } catch (error) {
-    console.error('❌ Error sending admin notification:', error.message);
-    return false;
+    try {
+      await this.transporter.sendMail(mailOptions);
+      console.log('Admin notification sent successfully');
+    } catch (error) {
+      console.error('Error sending admin notification:', error);
+      throw error;
+    }
   }
-};
 
-// Send KYC status update email
-exports.sendKYCStatusEmail = async (user, status) => {
-  try {
-    const transporter = createTransporter();
-    if (!transporter) return false;
-
-    const statusMessages = {
-      approved: {
-        title: 'KYC Verification Approved ✅',
-        message: 'Congratulations! Your KYC verification has been approved. You now have full access to all platform features.',
-        color: '#28a745'
-      },
-      rejected: {
-        title: 'KYC Verification Rejected ❌',
-        message: 'Unfortunately, your KYC verification was rejected. Please contact support for more information or resubmit your documents.',
-        color: '#dc3545'
-      },
-      pending: {
-        title: 'KYC Verification Pending ⏳',
-        message: 'Your KYC documents have been received and are being reviewed. We\'ll notify you once the review is complete.',
-        color: '#ffc107'
-      }
-    };
-
-    const statusInfo = statusMessages[status] || statusMessages.pending;
-
-    const mailOptions = {
-      from: `"${process.env.PLATFORM_NAME || 'Crypto Platform'}" <${process.env.EMAIL_USER}>`,
-      to: user.email,
-      subject: statusInfo.title,
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: ${statusInfo.color}; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-            .button { display: inline-block; padding: 12px 30px; background: ${statusInfo.color}; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h2>${statusInfo.title}</h2>
-            </div>
-            <div class="content">
-              <h3>Hello ${user.firstName},</h3>
-              <p>${statusInfo.message}</p>
-              
-              <p style="text-align: center;">
-                <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/dashboard" class="button">
-                  Go to Dashboard
-                </a>
-              </p>
-
-              <p>Best regards,<br>
-              <strong>The Elite-Cloud Mining Team</strong></p>
-            </div>
+  // Welcome email template
+  getWelcomeEmailTemplate(userName, userEmail) {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome to Elite-cloud Mining</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
+          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+          .header { background: linear-gradient(135deg, #f39c12, #e74c3c); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; margin: -20px -20px 20px -20px; }
+          .logo { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+          .content { padding: 20px 0; }
+          .highlight { background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #f39c12; }
+          .button { display: inline-block; background: linear-gradient(45deg, #f39c12, #e74c3c); color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; margin: 20px 0; font-weight: bold; }
+          .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+          .services { display: flex; flex-wrap: wrap; justify-content: space-around; margin: 20px 0; }
+          .service { text-align: center; margin: 10px; flex: 1; min-width: 150px; }
+          .service-icon { font-size: 30px; margin-bottom: 10px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">⛏️ Elite-cloud Mining</div>
+            <h1>Welcome to the Future of Crypto Mining!</h1>
           </div>
-        </body>
-        </html>
-      `
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ KYC status email sent to ${user.email}`);
-    return true;
-  } catch (error) {
-    console.error('❌ Error sending KYC status email:', error.message);
-    return false;
-  }
-};
-
-// Send transaction notification email
-exports.sendTransactionEmail = async (user, transaction) => {
-  try {
-    const transporter = createTransporter();
-    if (!transporter) return false;
-
-    const typeLabels = {
-      deposit: '💰 Deposit',
-      withdrawal: '💸 Withdrawal',
-      bonus: '🎁 Bonus',
-      fee: '📝 Fee'
-    };
-
-    const statusColors = {
-      pending: '#ffc107',
-      completed: '#28a745',
-      failed: '#dc3545'
-    };
-
-    const mailOptions = {
-      from: `"${process.env.PLATFORM_NAME || 'Crypto Platform'}" <${process.env.EMAIL_USER}>`,
-      to: user.email,
-      subject: `${typeLabels[transaction.type] || transaction.type} ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: ${statusColors[transaction.status] || '#667eea'}; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-            .info-box { background: white; padding: 20px; border-radius: 5px; margin: 20px 0; }
-            .info-box p { margin: 10px 0; }
-            .amount { font-size: 24px; font-weight: bold; color: ${statusColors[transaction.status] || '#667eea'}; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h2>Transaction ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}</h2>
+          
+          <div class="content">
+            <h2>Hello ${userName}! 👋</h2>
+            
+            <p>Congratulations! Your Elite-cloud Mining account has been successfully created. You're now part of our global community of crypto miners and traders.</p>
+            
+            <div class="highlight">
+              <strong>Your Account Details:</strong><br>
+              📧 Email: ${userEmail}<br>
+              🌐 Website: coinscloud.net<br>
+              📅 Registration Date: ${new Date().toLocaleDateString()}
             </div>
-            <div class="content">
-              <h3>Hello ${user.firstName},</h3>
-              <p>Your ${transaction.type} transaction has been ${transaction.status}.</p>
-              
-              <div class="info-box">
-                <p><strong>Type:</strong> ${typeLabels[transaction.type] || transaction.type}</p>
-                <p><strong>Amount:</strong> <span class="amount">${transaction.amount} ${transaction.currency}</span></p>
-                <p><strong>Status:</strong> ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}</p>
-                <p><strong>Date:</strong> ${new Date(transaction.createdAt).toLocaleString()}</p>
-                ${transaction.txHash ? `<p><strong>Transaction Hash:</strong> ${transaction.txHash}</p>` : ''}
+            
+            <h3>What You Can Do Now:</h3>
+            
+            <div class="services">
+              <div class="service">
+                <div class="service-icon">⛏️</div>
+                <h4>Cloud Mining</h4>
+                <p>Start mining Bitcoin, Ethereum, and other cryptocurrencies</p>
               </div>
+              <div class="service">
+                <div class="service-icon">🤝</div>
+                <h4>P2P Trading</h4>
+                <p>Trade directly with other users worldwide</p>
+              </div>
+              <div class="service">
+                <div class="service-icon">💰</div>
+                <h4>Crypto Loans</h4>
+                <p>Get instant loans using crypto as collateral</p>
+              </div>
+            </div>
+            
+            <div style="text-align: center;">
+              <a href="https://coinscloud.net/login" class="button">Access Your Dashboard</a>
+            </div>
+            
+            <h3>Important Security Reminders:</h3>
+            <ul>
+              <li>✅ Never share your login credentials with anyone</li>
+              <li>✅ Enable two-factor authentication (2FA)</li>
+              <li>✅ Use a strong, unique password</li>
+              <li>✅ Always verify URLs before entering sensitive information</li>
+            </ul>
+            
+            <p>Need help? Our 24/7 support team is here to assist you. Use the live chat on our website or contact us directly.</p>
+          </div>
+          
+          <div class="footer">
+            <p><strong>Elite-cloud Mining Company</strong><br>
+            🌐 coinscloud.net | 📧 support@coinscloud.net<br>
+            Follow us: Twitter | Telegram | Discord</p>
+            
+            <p>This email was sent to ${userEmail}. If you didn't create this account, please contact our support immediately.</p>
+            
+            <p>&copy; 2024 Elite-cloud Mining Company (coinscloud.net). All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  }
 
-              <p>Best regards,<br>
-              <strong>The Elite-Cloud Mining Team</strong></p>
+  // Admin notification template
+  getAdminNotificationTemplate(userDetails) {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New User Registration Alert</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
+          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+          .header { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; margin: -20px -20px 20px -20px; }
+          .alert { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 5px; margin: 20px 0; }
+          .user-details { background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #007bff; }
+          .detail-row { display: flex; justify-content: space-between; margin: 10px 0; padding: 5px 0; border-bottom: 1px solid #eee; }
+          .label { font-weight: bold; color: #495057; }
+          .value { color: #007bff; }
+          .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+          .button { display: inline-block; background: linear-gradient(45deg, #007bff, #0056b3); color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🚨 New User Registration Alert</h1>
+            <p>Elite-cloud Mining Admin Panel</p>
+          </div>
+          
+          <div class="alert">
+            <strong>📝 A new user has successfully registered on Elite-cloud Mining platform!</strong>
+          </div>
+          
+          <div class="user-details">
+            <h3>👤 User Information:</h3>
+            
+            <div class="detail-row">
+              <span class="label">Full Name:</span>
+              <span class="value">${userDetails.name || 'Not provided'}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="label">Email Address:</span>
+              <span class="value">${userDetails.email}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="label">Country:</span>
+              <span class="value">${userDetails.country || 'Not specified'}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="label">Registration Date:</span>
+              <span class="value">${new Date().toLocaleString()}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="label">User ID:</span>
+              <span class="value">${userDetails._id}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="label">Account Status:</span>
+              <span class="value">Active</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="label">KYC Status:</span>
+              <span class="value">${userDetails.kyc?.status || 'Pending'}</span>
             </div>
           </div>
-        </body>
-        </html>
-      `
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="https://coinscloud.net/admin/users" class="button">View User in Admin Panel</a>
+          </div>
+          
+          <h3>📊 Quick Stats:</h3>
+          <ul>
+            <li>Total Users: Loading...</li>
+            <li>Today's Registrations: Loading...</li>
+            <li>Platform Status: Active</li>
+          </ul>
+          
+          <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <strong>⚠️ Admin Action Required:</strong>
+            <p>Please review the new user account and verify their information. Consider sending a welcome message or setting up their initial mining configuration.</p>
+          </div>
+          
+          <div class="footer">
+            <p><strong>Elite-cloud Mining Admin System</strong><br>
+            🌐 coinscloud.net | 📧 admin@coinscloud.net</p>
+            
+            <p>This is an automated notification from the Elite-cloud Mining registration system.</p>
+            
+            <p>&copy; 2024 Elite-cloud Mining Company. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  // Send deposit/withdrawal receipt
+  async sendTransactionReceipt(userEmail, transactionDetails) {
+    const mailOptions = {
+      from: `"Elite-cloud Mining" <${process.env.EMAIL_USER}>`,
+      to: userEmail,
+      subject: `Transaction Receipt - ${transactionDetails.type.toUpperCase()} - Elite-cloud Mining`,
+      html: this.getTransactionReceiptTemplate(transactionDetails)
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ Transaction email sent to ${user.email}`);
-    return true;
-  } catch (error) {
-    console.error('❌ Error sending transaction email:', error.message);
-    return false;
+    try {
+      await this.transporter.sendMail(mailOptions);
+      console.log('Transaction receipt sent successfully to:', userEmail);
+    } catch (error) {
+      console.error('Error sending transaction receipt:', error);
+      throw error;
+    }
   }
-};
+
+  // Transaction receipt template
+  getTransactionReceiptTemplate(transaction) {
+    const isDeposit = transaction.type === 'deposit';
+    
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Transaction Receipt - Elite-cloud Mining</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
+          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+          .header { background: ${isDeposit ? 'linear-gradient(135deg, #27ae60, #2ecc71)' : 'linear-gradient(135deg, #e74c3c, #c0392b)'}; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; margin: -20px -20px 20px -20px; }
+          .receipt { background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid ${isDeposit ? '#27ae60' : '#e74c3c'}; }
+          .detail-row { display: flex; justify-content: space-between; margin: 10px 0; padding: 5px 0; border-bottom: 1px solid #eee; }
+          .label { font-weight: bold; }
+          .value { color: ${isDeposit ? '#27ae60' : '#e74c3c'}; }
+          .amount { font-size: 24px; font-weight: bold; text-align: center; margin: 20px 0; color: ${isDeposit ? '#27ae60' : '#e74c3c'}; }
+          .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>${isDeposit ? '💰' : '📤'} Transaction Receipt</h1>
+            <p>Elite-cloud Mining</p>
+          </div>
+          
+          <div class="amount">
+            ${isDeposit ? '+' : '-'}$${transaction.amount}
+          </div>
+          
+          <div class="receipt">
+            <h3>${isDeposit ? '💰 Deposit' : '📤 Withdrawal'} Receipt</h3>
+            
+            <div class="detail-row">
+              <span class="label">Transaction ID:</span>
+              <span class="value">${transaction._id}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="label">Amount:</span>
+              <span class="value">$${transaction.amount}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="label">Currency:</span>
+              <span class="value">${transaction.currency || 'USD'}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="label">Date & Time:</span>
+              <span class="value">${new Date().toLocaleString()}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="label">Status:</span>
+              <span class="value">${transaction.status || 'Completed'}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="label">Processing Fee:</span>
+              <span class="value">$${transaction.fee || '0.00'}</span>
+            </div>
+          </div>
+          
+          <div style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <strong>✅ Transaction ${isDeposit ? 'Deposit' : 'Withdrawal'} Successful!</strong>
+            <p>Your ${isDeposit ? 'deposit has been credited to' : 'withdrawal has been processed from'} your Elite-cloud Mining account.</p>
+          </div>
+          
+          <div class="footer">
+            <p><strong>Elite-cloud Mining Company</strong><br>
+            🌐 coinscloud.net | 📧 support@coinscloud.net</p>
+            
+            <p>This is an automated receipt. Please keep this for your records.</p>
+            
+            <p>&copy; 2024 Elite-cloud Mining Company. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+}
+
+module.exports = new EmailService();

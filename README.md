@@ -1,33 +1,53 @@
-# Elite-Cloud Mining Company - Crypto Trading Platform
+# Crypto Trading Platform
 
-A comprehensive cryptocurrency trading platform built with Node.js, Express, MongoDB, and Socket.io. Features include crypto trading, wallet management, cloud mining simulation, P2P trading, and real-time notifications.
+A comprehensive cryptocurrency trading platform built with Node.js, Express, React, and MongoDB. Features include crypto trading, wallet management, mining simulation, P2P trading, and transaction management.
 
-## 🚀 Features
+## Features
 
-### Core Features
-- **User Authentication**: Secure JWT-based authentication with bcrypt password hashing
-- **Wallet Management**: Multi-currency wallet support (BTC, ETH, USDT)
-- **Cloud Mining**: Mining plans with daily returns and automated payouts
-- **Crypto Trading**: Real-time trading with order matching
-- **P2P Trading**: Peer-to-peer crypto exchange marketplace
-- **Transaction Management**: Deposits, withdrawals, and transaction history
+- 🔐 User Authentication & Authorization (JWT)
+- 👤 User Profile Management & KYC Verification
+- 💰 Multi-cryptocurrency Wallet Management
+- 📊 Real-time Trading & Market Data
+- ⛏️ Mining Pool & Rewards System
+- 🤝 Peer-to-Peer Trading Marketplace
+- 📈 Transaction History & Analytics
+- 👨‍💼 Admin Dashboard & Management
+- 💬 Live Chat Support
+- 📱 Responsive Design
 
-### New Features (Latest Release)
-- ✅ **Email Notifications**: Automated emails for user registration, KYC updates, and transactions
-- ✅ **Admin Notifications**: Real-time email alerts when new users register
-- ✅ **Live Chat Integration**: Support for Tawk.to, Intercom, Crisp, and Facebook Messenger
-- ✅ **Socket.io Real-time Updates**: Live notifications for user registrations, KYC updates, and transactions
-- ✅ **Enhanced Admin Dashboard**: Recent user registrations, transaction monitoring
+## Technology Stack
 
-## 📋 Prerequisites
+### Backend
+- Node.js & Express.js
+- MongoDB with Mongoose ODM
+- JWT Authentication
+- Socket.io for real-time features
+- Multer for file uploads
+- Nodemailer for emails
 
+### Frontend
+- React 18
+- React Router for navigation
+- React Hook Form for form handling
+- React Toastify for notifications
+- CSS3 for styling
+
+### Security
+- Helmet for security headers
+- Express Rate Limiting
+- CORS configuration
+- Bcrypt password hashing
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
 - Node.js (v14 or higher)
 - MongoDB (v4.4 or higher)
-- npm or yarn
+- npm or yarn package manager
 
-## 🔧 Installation
+## Installation
 
-1. **Clone the repository**
+### 1. Clone the repository
 ```bash
 git clone https://github.com/AGWU662/micro.git
 cd micro

@@ -76,24 +76,31 @@ router.post('/register', [
       ]
     });
 
-    // Send welcome email and admin notification
-    sendWelcomeEmail(user).catch(err => console.error('Email error:', err));
-    sendAdminNewUserNotification(user).catch(err => console.error('Admin notification error:', err));
-
-    // Emit Socket.io event for real-time admin notification
-    const io = req.app.get('io');
-    if (io) {
-      io.emit('new_user_registration', {
-        user: {
-          id: user._id,
-          name: `${user.firstName} ${user.lastName}`,
-          email: user.email,
-          createdAt: user.createdAt
-        }
-      });
+    // Send welcome email to user
+    try {
+      await emailService.sendWelcomeEmail(user.email, `${user.firstName} ${user.lastName}`);
+    } catch (emailError) {
+      console.error('Failed to send welcome email:', emailError);
+      // Don't fail registration if email fails
     }
 
-    sendTokenResponse(user, 201, res, 'Registration successful');
+    // Send admin notification
+    try {
+      await emailService.sendAdminNotification({
+        _id: user._id,
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+        country: user.country,
+        phone: user.phone,
+        registrationDate: user.createdAt,
+        kyc: user.kyc
+      });
+    } catch (emailError) {
+      console.error('Failed to send admin notification:', emailError);
+      // Don't fail registration if email fails
+    }
+
+    sendTokenResponse(user, 201, res, 'Registration successful - Welcome email sent!');
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({

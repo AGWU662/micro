@@ -357,7 +357,7 @@ router.put('/transaction/:id/approve', async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Transaction approved successfully',
+      message: 'Transaction approved successfully - Receipt sent to user',
       transaction
     });
   } catch (error) {
