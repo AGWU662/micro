@@ -14,7 +14,7 @@ const LandingPage = () => {
     // Fetch live crypto prices for display
     const fetchPrices = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/trading/prices');
+        const response = await fetch('/api/trading/prices');
         if (response.ok) {
           const data = await response.json();
           setCryptoPrices(data.data || {});
@@ -30,38 +30,7 @@ const LandingPage = () => {
   }, []);
 
   useEffect(() => {
-    // Fetch dynamic testimonials from Ollama API
-    const fetchDynamicTestimonials = async () => {
-      try {
-        const response = await fetch('http://localhost:11434/api/generate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: 'llama2',
-            prompt: `Generate 3 realistic cryptocurrency trading platform testimonials in JSON format. Each should have name, role, content (2-3 sentences), and rating (4-5 stars). Make them diverse and authentic. Response format: [{"name": "...", "role": "...", "content": "...", "rating": 5}]`,
-            stream: false
-          })
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          try {
-            const testimonials = JSON.parse(data.response);
-            if (Array.isArray(testimonials)) {
-              setDynamicTestimonials(testimonials);
-            }
-          } catch (parseError) {
-            console.log('Could not parse testimonials from Ollama');
-          }
-        }
-      } catch (error) {
-        console.log('Could not fetch testimonials from Ollama API');
-      }
-    };
-
-    fetchDynamicTestimonials();
+    // Static testimonials (no external API dependency)
   }, []);
 
   // Language detection and auto-switching
@@ -208,7 +177,7 @@ const LandingPage = () => {
     if (!newsletterEmail) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/newsletter/subscribe', {
+      const response = await fetch('/api/newsletter/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

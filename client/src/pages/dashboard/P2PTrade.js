@@ -55,13 +55,13 @@ const P2PTrade = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/p2p/orders?type=${activeTab}&currency=${selectedCurrency}`, {
+      const response = await fetch(`/api/p2p/offers?type=${activeTab}&currency=${selectedCurrency}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       
       if (response.ok) {
         const data = await response.json();
-        setOrders(data.data?.orders || mockOrders);
+        setOrders(data.offers || data.data?.orders || mockOrders);
       }
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -73,13 +73,13 @@ const P2PTrade = () => {
 
   const fetchMyOrders = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/p2p/my-orders', {
+      const response = await fetch('/api/p2p/trades', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       
       if (response.ok) {
         const data = await response.json();
-        setMyOrders(data.data?.orders || []);
+        setMyOrders(data.trades || data.data?.orders || []);
       }
     } catch (error) {
       console.error('Error fetching my orders:', error);
@@ -129,7 +129,7 @@ const P2PTrade = () => {
   const handleCreateOrder = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/api/p2p/create-order', {
+      const response = await fetch('/api/p2p/offer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -26,6 +26,26 @@ router.get('/pairs', async (req, res) => {
   }
 });
 
+// @route   GET /api/trading/prices
+// @desc    Get current crypto prices
+// @access  Public
+router.get('/prices', async (req, res) => {
+  try {
+    const prices = priceService.getCurrentPrices();
+
+    res.status(200).json({
+      success: true,
+      data: prices
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+});
+
 // @route   POST /api/trading/order
 // @desc    Place a trading order
 // @access  Private

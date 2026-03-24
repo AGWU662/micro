@@ -29,26 +29,30 @@ const Dashboard = () => {
       const token = localStorage.getItem('token');
       
       // Fetch wallet balance
-      const walletResponse = await fetch('http://localhost:5000/api/wallet/balance', {
+      const walletResponse = await fetch('/api/wallet', {
         headers: { Authorization: `Bearer ${token}` }
       });
       
       // Fetch recent transactions
-      const transactionsResponse = await fetch('http://localhost:5000/api/transactions?limit=5', {
+      const transactionsResponse = await fetch('/api/transactions?limit=5', {
         headers: { Authorization: `Bearer ${token}` }
       });
       
       if (walletResponse.ok) {
         const walletData = await walletResponse.json();
+        // Show USDT balance as the primary balance indicator
+        const balances = walletData.wallet?.balances || [];
+        const usdtBalance = balances.find(b => b.currency === 'USDT');
         setStats(prev => ({
           ...prev,
-          totalBalance: walletData.data?.balance || 0
+          totalBalance: usdtBalance?.total || 0,
+          walletBalances: balances
         }));
       }
       
       if (transactionsResponse.ok) {
         const transactionsData = await transactionsResponse.json();
-        setRecentTransactions(transactionsData.data?.transactions || []);
+        setRecentTransactions(transactionsData.transactions || transactionsData.data?.transactions || []);
       }
       
     } catch (error) {
@@ -60,7 +64,7 @@ const Dashboard = () => {
 
   const fetchPrices = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/trading/prices');
+      const response = await fetch('/api/trading/prices');
       if (response.ok) {
         const data = await response.json();
         setCryptoPrices(data.data || {});

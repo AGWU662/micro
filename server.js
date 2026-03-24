@@ -23,8 +23,22 @@ const io = socketIo(server, {
 });
 
 // Middleware
-app.use(helmet());
-app.use(cors());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:', 'blob:'],
+      connectSrc: ["'self'", 'wss:', 'ws:'],
+      fontSrc: ["'self'", 'data:'],
+    },
+  },
+}));
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -34,6 +48,13 @@ const limiter = rateLimit({
   max: 100 // limit each IP to 100 requests per windowMs
 });
 app.use('/api/', limiter);
+
+// Rate limiting for static uploads and general routes
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 500
+});
+app.use(generalLimiter);
 
 // Static folder for uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -87,15 +108,27 @@ app.use('/api/trading', require('./routes/trading'));
 app.use('/api/p2p', require('./routes/p2p'));
 app.use('/api/transactions', require('./routes/transactions'));
 app.use('/api/kyc', require('./routes/kyc'));
+app.use('/api/newsletter', require('./routes/newsletter'));
 
-// Welcome route
-app.get('/api', (req, res) => {
-  res.json({ 
-    message: 'Welcome to Crypto Trading Platform API',
-    version: '1.0.0',
-    status: 'Active'
+// Serve React frontend in production
+if (process.env.NODE_ENV === 'production') {
+  const clientBuildPath = path.join(__dirname, 'client', 'build');
+  app.use(express.static(clientBuildPath));
+
+  // Handle React routing - return index.html for all non-API routes
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
   });
-});
+} else {
+  // Welcome route for development
+  app.get('/api', (req, res) => {
+    res.json({ 
+      message: 'Welcome to Crypto Trading Platform API',
+      version: '1.0.0',
+      status: 'Active'
+    });
+  });
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
