@@ -2,7 +2,7 @@ services:
   - type: web
     name: cryptoplatform
     env: python
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate && python manage.py create_admin
     startCommand: gunicorn cryptoplatform.wsgi:application
     envVars:
       - key: PYTHON_VERSION
@@ -12,7 +12,7 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: cryptoplatform.onrender.com,.onrender.com
+        value: .onrender.com,micro-crypto.onrender.com,cryptoplatform.onrender.com
       - key: DATABASE_URL
         fromDatabase:
           name: cryptoplatform-db
@@ -25,6 +25,12 @@ services:
         value: "688661857792261"
       - key: CLOUDINARY_API_SECRET
         value: LGe4IdMIbnhTE_4FYFgkwanf5Qo
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_EMAIL
+        value: kingsleyotisi46@icloud.com
+      - key: ADMIN_PASSWORD
+        value: CryptoAdmin2026!
 
 databases:
   - name: cryptoplatform-db
