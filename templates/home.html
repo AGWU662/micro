@@ -18,11 +18,7 @@
             --warning: #ffd700;
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             background: var(--dark-bg);
@@ -34,10 +30,8 @@
         /* Animated Background */
         .bg-animation {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: -1;
             background: linear-gradient(45deg, #0f0f23, #1a1a2e, #16213e);
         }
@@ -45,16 +39,54 @@
         .bg-animation::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23667eea' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
         
+        /* Scrolling Ticker */
+        .ticker-wrapper {
+            background: rgba(0,0,0,0.5);
+            padding: 10px 0;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+        }
+        
+        .ticker-content {
+            display: flex;
+            animation: scroll 30s linear infinite;
+            width: max-content;
+        }
+        
+        .ticker-content:hover { animation-play-state: paused; }
+        
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .ticker-item-scroll {
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            white-space: nowrap;
+        }
+        
+        .ticker-item-scroll img {
+            width: 24px; height: 24px;
+            margin-right: 8px;
+            border-radius: 50%;
+        }
+        
+        .ticker-item-scroll .symbol { font-weight: 600; margin-right: 10px; }
+        .ticker-item-scroll .price { color: #fff; margin-right: 8px; }
+        .ticker-item-scroll .change { font-size: 0.85rem; }
+        .ticker-item-scroll .up { color: var(--success); }
+        .ticker-item-scroll .down { color: #ff4757; }
+        
         /* Navbar */
         .navbar {
-            background: rgba(15, 15, 35, 0.9);
+            background: rgba(15, 15, 35, 0.95);
             backdrop-filter: blur(10px);
             padding: 1rem 2rem;
             border-bottom: 1px solid rgba(102, 126, 234, 0.2);
@@ -76,9 +108,7 @@
             margin: 0 0.5rem;
         }
         
-        .nav-link:hover {
-            color: var(--accent) !important;
-        }
+        .nav-link:hover { color: var(--accent) !important; }
         
         .btn-glow {
             background: var(--primary-gradient);
@@ -115,10 +145,10 @@
         
         /* Hero Section */
         .hero {
-            min-height: 100vh;
+            min-height: 90vh;
             display: flex;
             align-items: center;
-            padding: 6rem 0;
+            padding: 4rem 0;
         }
         
         .hero h1 {
@@ -141,7 +171,7 @@
             margin-bottom: 2rem;
         }
         
-        /* Crypto Ticker */
+        /* Live Prices Card */
         .crypto-ticker {
             background: var(--card-bg);
             border-radius: 20px;
@@ -156,40 +186,36 @@
             justify-content: space-between;
             padding: 1rem 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
         }
         
-        .ticker-item:last-child {
-            border-bottom: none;
-        }
+        .ticker-item:hover { background: rgba(102, 126, 234, 0.1); margin: 0 -1rem; padding: 1rem; border-radius: 10px; }
+        .ticker-item:last-child { border-bottom: none; }
         
-        .coin-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+        .coin-info { display: flex; align-items: center; gap: 1rem; }
         
         .coin-icon {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            font-size: 1.2rem;
         }
         
         .btc { background: linear-gradient(135deg, #f7931a, #ff9500); }
         .eth { background: linear-gradient(135deg, #627eea, #8c9eff); }
         .usdt { background: linear-gradient(135deg, #26a17b, #50c878); }
         .bnb { background: linear-gradient(135deg, #f3ba2f, #ffd700); }
+        .sol { background: linear-gradient(135deg, #9945FF, #14F195); }
+        .xrp { background: linear-gradient(135deg, #23292F, #00AAE4); }
         
         .price-up { color: var(--success); }
         .price-down { color: #ff4757; }
         
         /* Features Section */
-        .features {
-            padding: 6rem 0;
-        }
+        .features { padding: 6rem 0; }
         
         .section-title {
             font-size: 2.5rem;
@@ -215,8 +241,7 @@
         }
         
         .feature-icon {
-            width: 80px;
-            height: 80px;
+            width: 80px; height: 80px;
             background: var(--primary-gradient);
             border-radius: 20px;
             display: flex;
@@ -226,14 +251,74 @@
             margin: 0 auto 1.5rem;
         }
         
-        .feature-card h4 {
-            font-weight: 600;
-            margin-bottom: 1rem;
+        .feature-card h4 { font-weight: 600; margin-bottom: 1rem; }
+        .feature-card p { color: var(--text-secondary); }
+        
+        /* Testimonials Section */
+        .testimonials {
+            padding: 6rem 0;
+            background: linear-gradient(180deg, transparent, rgba(102, 126, 234, 0.05));
         }
         
-        .feature-card p {
-            color: var(--text-secondary);
+        .testimonial-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            height: 100%;
+            transition: all 0.3s ease;
         }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.15);
+        }
+        
+        .testimonial-content {
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .author-avatar {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .author-info h5 { margin: 0; font-size: 1rem; }
+        .author-info span { color: var(--text-secondary); font-size: 0.85rem; }
+        .testimonial-rating { color: #ffd700; margin-top: 1rem; }
+        
+        /* Partners Section */
+        .partners {
+            padding: 4rem 0;
+            background: var(--card-bg);
+        }
+        
+        .partner-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .partner-logo:hover { opacity: 1; transform: scale(1.1); }
+        .partner-logo i { font-size: 3rem; margin-bottom: 0.5rem; }
+        .partner-logo span { color: var(--text-secondary); font-size: 0.9rem; }
         
         /* Stats Section */
         .stats {
@@ -241,10 +326,7 @@
             background: linear-gradient(180deg, transparent, rgba(102, 126, 234, 0.1));
         }
         
-        .stat-item {
-            text-align: center;
-            padding: 2rem;
-        }
+        .stat-item { text-align: center; padding: 2rem; }
         
         .stat-number {
             font-size: 3rem;
@@ -255,21 +337,113 @@
             background-clip: text;
         }
         
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
+        .stat-label { color: var(--text-secondary); font-size: 1.1rem; }
+        
+        /* Newsletter Section */
+        .newsletter {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        }
+        
+        .newsletter-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .newsletter-form .form-control {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+        }
+        
+        .newsletter-form .form-control::placeholder { color: rgba(255,255,255,0.5); }
+        .newsletter-form .form-control:focus { 
+            background: rgba(255,255,255,0.15);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
         
         /* Footer */
         footer {
-            background: var(--card-bg);
-            padding: 3rem 0;
+            background: #0a0a18;
+            padding: 4rem 0 2rem;
             border-top: 1px solid rgba(102, 126, 234, 0.2);
         }
         
-        footer p {
-            color: var(--text-secondary);
+        .footer-section h5 {
+            color: white;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
         }
+        
+        .footer-section ul { list-style: none; padding: 0; }
+        .footer-section ul li { margin-bottom: 0.75rem; }
+        .footer-section ul li a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-section ul li a:hover { color: var(--accent); }
+        
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px; height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: white;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: var(--primary-gradient);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 2rem;
+            margin-top: 3rem;
+        }
+        
+        /* Pop-up Notifications */
+        .notification-popup {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--card-bg);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 9999;
+            transform: translateX(-120%);
+            transition: transform 0.5s ease;
+            max-width: 350px;
+        }
+        
+        .notification-popup.show { transform: translateX(0); }
+        
+        .notification-popup .avatar {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .notification-popup .content { flex: 1; }
+        .notification-popup .content strong { color: var(--success); }
+        .notification-popup .content small { color: var(--text-secondary); display: block; margin-top: 3px; }
         
         /* Animations */
         @keyframes float {
@@ -277,27 +451,36 @@
             50% { transform: translateY(-20px); }
         }
         
-        .float-animation {
-            animation: float 3s ease-in-out infinite;
+        .float-animation { animation: float 3s ease-in-out infinite; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
+        
+        .pulse { animation: pulse 2s infinite; }
         
         /* Responsive */
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .stat-number {
-                font-size: 2rem;
-            }
+            .hero h1 { font-size: 2.5rem; }
+            .stat-number { font-size: 2rem; }
+            .ticker-wrapper { display: none; }
+            .notification-popup { left: 10px; right: 10px; max-width: none; }
         }
     </style>
 </head>
 <body>
     <div class="bg-animation"></div>
     
+    <!-- Scrolling Price Ticker -->
+    <div class="ticker-wrapper">
+        <div class="ticker-content" id="priceTicker">
+            <!-- Prices loaded by JavaScript -->
+        </div>
+    </div>
+    
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg fixed-top">
+    <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/">
                 <i class="fas fa-coins me-2"></i>CryptoTrade
@@ -310,7 +493,7 @@
                     <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
                     <li class="nav-item"><a class="nav-link" href="#trading">Trading</a></li>
                     <li class="nav-item"><a class="nav-link" href="#mining">Mining</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#p2p">P2P</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#testimonials">Reviews</a></li>
                 </ul>
                 <div class="d-flex gap-2">
                     <a href="/admin/login/" class="btn btn-outline-glow">Login</a>
@@ -326,7 +509,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <h1>Trade Crypto with <span>Confidence</span></h1>
-                    <p>Experience the future of cryptocurrency trading. Buy, sell, and trade digital assets with our secure and intuitive platform.</p>
+                    <p>Experience the future of cryptocurrency trading. Buy, sell, mine, and trade digital assets with our secure and intuitive platform. Join over 100,000+ traders worldwide.</p>
                     <div class="d-flex gap-3 flex-wrap">
                         <a href="/admin/" class="btn btn-glow btn-lg">
                             <i class="fas fa-rocket me-2"></i>Start Trading
@@ -335,61 +518,17 @@
                             <i class="fas fa-play me-2"></i>Learn More
                         </a>
                     </div>
+                    <div class="mt-4 d-flex gap-4">
+                        <div><i class="fas fa-shield-alt text-success me-2"></i>SSL Secured</div>
+                        <div><i class="fas fa-lock text-success me-2"></i>2FA Protected</div>
+                        <div><i class="fas fa-check-circle text-success me-2"></i>KYC Verified</div>
+                    </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-6 mt-4 mt-lg-0">
                     <div class="crypto-ticker float-animation">
-                        <h5 class="mb-4"><i class="fas fa-chart-line me-2"></i>Live Prices</h5>
-                        <div class="ticker-item">
-                            <div class="coin-info">
-                                <div class="coin-icon btc">₿</div>
-                                <div>
-                                    <strong>Bitcoin</strong>
-                                    <small class="d-block text-muted">BTC</small>
-                                </div>
-                            </div>
-                            <div class="text-end">
-                                <strong>$67,245.00</strong>
-                                <small class="d-block price-up">+2.34%</small>
-                            </div>
-                        </div>
-                        <div class="ticker-item">
-                            <div class="coin-info">
-                                <div class="coin-icon eth">Ξ</div>
-                                <div>
-                                    <strong>Ethereum</strong>
-                                    <small class="d-block text-muted">ETH</small>
-                                </div>
-                            </div>
-                            <div class="text-end">
-                                <strong>$3,456.78</strong>
-                                <small class="d-block price-up">+1.89%</small>
-                            </div>
-                        </div>
-                        <div class="ticker-item">
-                            <div class="coin-info">
-                                <div class="coin-icon usdt">₮</div>
-                                <div>
-                                    <strong>Tether</strong>
-                                    <small class="d-block text-muted">USDT</small>
-                                </div>
-                            </div>
-                            <div class="text-end">
-                                <strong>$1.00</strong>
-                                <small class="d-block text-muted">+0.01%</small>
-                            </div>
-                        </div>
-                        <div class="ticker-item">
-                            <div class="coin-info">
-                                <div class="coin-icon bnb">B</div>
-                                <div>
-                                    <strong>BNB</strong>
-                                    <small class="d-block text-muted">BNB</small>
-                                </div>
-                            </div>
-                            <div class="text-end">
-                                <strong>$598.45</strong>
-                                <small class="d-block price-down">-0.56%</small>
-                            </div>
+                        <h5 class="mb-4"><i class="fas fa-chart-line me-2"></i>Live Market Prices</h5>
+                        <div id="livePrices">
+                            <!-- Prices loaded dynamically -->
                         </div>
                     </div>
                 </div>
@@ -404,57 +543,171 @@
             <div class="row g-4">
                 <div class="col-md-4" id="trading">
                     <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-exchange-alt"></i>
-                        </div>
+                        <div class="feature-icon"><i class="fas fa-exchange-alt"></i></div>
                         <h4>Spot Trading</h4>
-                        <p>Trade cryptocurrencies instantly with market and limit orders. Low fees and high liquidity.</p>
+                        <p>Trade cryptocurrencies instantly with market and limit orders. Low fees starting at 0.1%.</p>
                     </div>
                 </div>
                 <div class="col-md-4" id="mining">
                     <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-microchip"></i>
-                        </div>
+                        <div class="feature-icon"><i class="fas fa-microchip"></i></div>
                         <h4>Cloud Mining</h4>
-                        <p>Mine Bitcoin and other cryptocurrencies without expensive hardware. Earn daily returns.</p>
+                        <p>Mine Bitcoin and altcoins without expensive hardware. Daily payouts guaranteed.</p>
                     </div>
                 </div>
                 <div class="col-md-4" id="p2p">
                     <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
+                        <div class="feature-icon"><i class="fas fa-users"></i></div>
                         <h4>P2P Trading</h4>
-                        <p>Buy and sell directly with other users. Multiple payment methods with escrow protection.</p>
+                        <p>Buy and sell directly with users. Multiple payment methods with escrow protection.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-wallet"></i>
-                        </div>
-                        <h4>Secure Wallets</h4>
-                        <p>Multi-currency wallets with advanced security. Store BTC, ETH, USDT, and more.</p>
+                        <div class="feature-icon"><i class="fas fa-wallet"></i></div>
+                        <h4>Multi-Currency Wallets</h4>
+                        <p>Store BTC, ETH, USDT, BNB, SOL, XRP and more in secure wallets.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <h4>KYC Verified</h4>
-                        <p>Enhanced security with identity verification. Protect your assets with 2FA.</p>
+                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                        <h4>Bank-Grade Security</h4>
+                        <p>256-bit encryption, 2FA, cold storage, and comprehensive KYC verification.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-headset"></i>
-                        </div>
+                        <div class="feature-icon"><i class="fas fa-headset"></i></div>
                         <h4>24/7 Support</h4>
-                        <p>Round-the-clock customer support. Get help whenever you need it.</p>
+                        <p>Round-the-clock customer support via live chat, email, and phone.</p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2 class="section-title">What Our <span style="color: #667eea;">Users Say</span></h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            "CryptoTrade has transformed my trading experience. The interface is intuitive, fees are low, and withdrawals are instant. Highly recommended!"
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">👨‍💼</div>
+                            <div class="author-info">
+                                <h5>Michael Chen</h5>
+                                <span>Professional Trader</span>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            "The cloud mining feature is amazing! I earn passive income daily without any technical knowledge. Customer support is also excellent."
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">👩‍💻</div>
+                            <div class="author-info">
+                                <h5>Sarah Johnson</h5>
+                                <span>Mining Enthusiast</span>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            "P2P trading with escrow protection gives me peace of mind. I've completed over 200 trades without any issues. Best platform ever!"
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">👨‍🎓</div>
+                            <div class="author-info">
+                                <h5>David Rodriguez</h5>
+                                <span>P2P Merchant</span>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            "Security is top-notch! 2FA, KYC verification, and cold storage for funds. I trust CryptoTrade with my investments completely."
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">👩‍🔬</div>
+                            <div class="author-info">
+                                <h5>Emma Williams</h5>
+                                <span>Crypto Investor</span>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            "Started with just $100 and now managing a diverse portfolio. The analytics tools and real-time charts are incredibly helpful."
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">👨‍🚀</div>
+                            <div class="author-info">
+                                <h5>James Wilson</h5>
+                                <span>Day Trader</span>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            "Fast deposits, instant withdrawals, and no hidden fees. CryptoTrade is transparent and reliable. My go-to exchange for 2 years!"
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">👩‍💼</div>
+                            <div class="author-info">
+                                <h5>Lisa Anderson</h5>
+                                <span>Long-term Holder</span>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Partners Section -->
+    <section class="partners">
+        <div class="container">
+            <h2 class="section-title mb-5">Trusted <span style="color: #667eea;">Partners</span></h2>
+            <div class="row justify-content-center">
+                <div class="col-4 col-md-2">
+                    <div class="partner-logo"><i class="fab fa-bitcoin" style="color: #f7931a;"></i><span>Bitcoin</span></div>
+                </div>
+                <div class="col-4 col-md-2">
+                    <div class="partner-logo"><i class="fab fa-ethereum" style="color: #627eea;"></i><span>Ethereum</span></div>
+                </div>
+                <div class="col-4 col-md-2">
+                    <div class="partner-logo"><i class="fas fa-chart-line" style="color: #26a17b;"></i><span>CoinGecko</span></div>
+                </div>
+                <div class="col-4 col-md-2">
+                    <div class="partner-logo"><i class="fas fa-link" style="color: #2775ca;"></i><span>Chainlink</span></div>
+                </div>
+                <div class="col-4 col-md-2">
+                    <div class="partner-logo"><i class="fas fa-shield-alt" style="color: #00ff88;"></i><span>Certik</span></div>
+                </div>
+                <div class="col-4 col-md-2">
+                    <div class="partner-logo"><i class="fas fa-cloud" style="color: #667eea;"></i><span>AWS</span></div>
                 </div>
             </div>
         </div>
@@ -466,13 +719,13 @@
             <div class="row">
                 <div class="col-md-3 col-6">
                     <div class="stat-item">
-                        <div class="stat-number">$50M+</div>
-                        <div class="stat-label">Trading Volume</div>
+                        <div class="stat-number" data-count="50">$50M+</div>
+                        <div class="stat-label">24h Trading Volume</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="stat-item">
-                        <div class="stat-number">100K+</div>
+                        <div class="stat-number">150K+</div>
                         <div class="stat-label">Active Users</div>
                     </div>
                 </div>
@@ -485,10 +738,24 @@
                 <div class="col-md-3 col-6">
                     <div class="stat-item">
                         <div class="stat-number">99.9%</div>
-                        <div class="stat-label">Uptime</div>
+                        <div class="stat-label">Uptime Guarantee</div>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+    
+    <!-- Newsletter Section -->
+    <section class="newsletter">
+        <div class="container text-center">
+            <h2 class="mb-3">Stay Updated</h2>
+            <p class="text-muted mb-4">Subscribe to our newsletter for market insights, trading tips, and exclusive offers.</p>
+            <form class="newsletter-form" id="newsletterForm">
+                <div class="input-group">
+                    <input type="email" class="form-control" placeholder="Enter your email" required>
+                    <button class="btn btn-glow" type="submit">Subscribe</button>
+                </div>
+            </form>
         </div>
     </section>
     
@@ -496,23 +763,214 @@
     <section class="py-5">
         <div class="container text-center">
             <h2 class="mb-4">Ready to Start Trading?</h2>
-            <p class="text-muted mb-4">Join thousands of traders who trust CryptoTrade</p>
-            <a href="/admin/" class="btn btn-glow btn-lg">
-                <i class="fas fa-user-plus me-2"></i>Get Started Now
+            <p class="text-muted mb-4">Join thousands of traders who trust CryptoTrade for their crypto journey</p>
+            <a href="/admin/" class="btn btn-glow btn-lg me-3">
+                <i class="fas fa-user-plus me-2"></i>Get Started Free
+            </a>
+            <a href="#features" class="btn btn-outline-glow btn-lg">
+                <i class="fas fa-info-circle me-2"></i>Learn More
             </a>
         </div>
     </section>
     
     <!-- Footer -->
     <footer>
-        <div class="container text-center">
-            <p class="mb-2">
-                <i class="fas fa-coins me-2"></i>CryptoTrade Platform
-            </p>
-            <p class="small">&copy; 2026 CryptoTrade. All rights reserved.</p>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5><i class="fas fa-coins me-2"></i>CryptoTrade</h5>
+                    <p class="text-muted">Leading cryptocurrency trading platform with cloud mining, P2P trading, and secure multi-currency wallets. Trade with confidence.</p>
+                    <div class="social-links mt-3">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2 mb-4">
+                    <div class="footer-section">
+                        <h5>Platform</h5>
+                        <ul>
+                            <li><a href="#trading">Spot Trading</a></li>
+                            <li><a href="#mining">Cloud Mining</a></li>
+                            <li><a href="#p2p">P2P Trading</a></li>
+                            <li><a href="/admin/">Dashboard</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2 mb-4">
+                    <div class="footer-section">
+                        <h5>Company</h5>
+                        <ul>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Careers</a></li>
+                            <li><a href="#">Press Kit</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2 mb-4">
+                    <div class="footer-section">
+                        <h5>Support</h5>
+                        <ul>
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">API Docs</a></li>
+                            <li><a href="#">Fees</a></li>
+                            <li><a href="#">Security</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2 mb-4">
+                    <div class="footer-section">
+                        <h5>Legal</h5>
+                        <ul>
+                            <li><a href="#">Terms of Service</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Cookie Policy</a></li>
+                            <li><a href="#">Compliance</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom text-center">
+                <p class="text-muted mb-2">&copy; 2026 CryptoTrade Platform. All rights reserved.</p>
+                <p class="text-muted small">Licensed and regulated. Your funds are protected.</p>
+            </div>
         </div>
     </footer>
     
+    <!-- Pop-up Notification -->
+    <div class="notification-popup" id="notificationPopup">
+        <div class="avatar">👤</div>
+        <div class="content">
+            <span id="notificationText">Someone just traded <strong>0.5 BTC</strong></span>
+            <small id="notificationTime">2 minutes ago</small>
+        </div>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Crypto data with images
+        const cryptos = [
+            { symbol: 'BTC', name: 'Bitcoin', icon: '₿', class: 'btc', price: 67245.00, change: 2.34 },
+            { symbol: 'ETH', name: 'Ethereum', icon: 'Ξ', class: 'eth', price: 3456.78, change: 1.89 },
+            { symbol: 'USDT', name: 'Tether', icon: '₮', class: 'usdt', price: 1.00, change: 0.01 },
+            { symbol: 'BNB', name: 'BNB', icon: 'B', class: 'bnb', price: 598.45, change: -0.56 },
+            { symbol: 'SOL', name: 'Solana', icon: 'S', class: 'sol', price: 142.30, change: 5.67 },
+            { symbol: 'XRP', name: 'Ripple', icon: 'X', class: 'xrp', price: 0.52, change: -1.23 },
+            { symbol: 'DOGE', name: 'Dogecoin', icon: 'Ð', class: 'bnb', price: 0.082, change: 3.45 },
+            { symbol: 'ADA', name: 'Cardano', icon: 'A', class: 'eth', price: 0.45, change: -0.89 }
+        ];
+        
+        // Generate scrolling ticker
+        function generateTicker() {
+            const ticker = document.getElementById('priceTicker');
+            let html = '';
+            // Duplicate for seamless scroll
+            for (let i = 0; i < 2; i++) {
+                cryptos.forEach(c => {
+                    const changeClass = c.change >= 0 ? 'up' : 'down';
+                    const changeSign = c.change >= 0 ? '+' : '';
+                    html += `
+                        <div class="ticker-item-scroll">
+                            <div class="coin-icon ${c.class}" style="width:24px;height:24px;font-size:0.8rem;">${c.icon}</div>
+                            <span class="symbol">${c.symbol}</span>
+                            <span class="price">$${c.price.toLocaleString()}</span>
+                            <span class="change ${changeClass}">${changeSign}${c.change}%</span>
+                        </div>
+                    `;
+                });
+            }
+            ticker.innerHTML = html;
+        }
+        
+        // Generate live prices card
+        function generateLivePrices() {
+            const container = document.getElementById('livePrices');
+            let html = '';
+            cryptos.slice(0, 6).forEach(c => {
+                const changeClass = c.change >= 0 ? 'price-up' : 'price-down';
+                const changeSign = c.change >= 0 ? '+' : '';
+                html += `
+                    <div class="ticker-item">
+                        <div class="coin-info">
+                            <div class="coin-icon ${c.class}">${c.icon}</div>
+                            <div>
+                                <strong>${c.name}</strong>
+                                <small class="d-block text-muted">${c.symbol}</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <strong>$${c.price.toLocaleString()}</strong>
+                            <small class="d-block ${changeClass}">${changeSign}${c.change}%</small>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+        
+        // Simulate price updates
+        function updatePrices() {
+            cryptos.forEach(c => {
+                const change = (Math.random() - 0.5) * 2;
+                c.price = c.price * (1 + change / 100);
+                c.change = parseFloat((c.change + (Math.random() - 0.5) * 0.5).toFixed(2));
+            });
+            generateTicker();
+            generateLivePrices();
+        }
+        
+        // Pop-up notifications
+        const notifications = [
+            { avatar: '👨', text: 'John from USA just bought <strong>0.5 BTC</strong>', time: 'Just now' },
+            { avatar: '👩', text: 'Maria from UK withdrew <strong>2.3 ETH</strong>', time: '1 minute ago' },
+            { avatar: '👨‍💼', text: 'Ahmed from UAE deposited <strong>$5,000 USDT</strong>', time: '2 minutes ago' },
+            { avatar: '👩‍💻', text: 'Lisa started mining with <strong>100 TH/s</strong>', time: '3 minutes ago' },
+            { avatar: '👨‍🎓', text: 'Carlos completed P2P trade for <strong>1.2 BTC</strong>', time: '5 minutes ago' },
+            { avatar: '👩‍🔬', text: 'Emma earned <strong>0.02 BTC</strong> from mining', time: 'Just now' },
+            { avatar: '🧑‍💼', text: 'New user from Germany registered', time: '1 minute ago' },
+            { avatar: '👨‍🚀', text: 'David placed order for <strong>10 SOL</strong>', time: '2 minutes ago' }
+        ];
+        
+        let notificationIndex = 0;
+        
+        function showNotification() {
+            const popup = document.getElementById('notificationPopup');
+            const notification = notifications[notificationIndex];
+            
+            popup.querySelector('.avatar').textContent = notification.avatar;
+            document.getElementById('notificationText').innerHTML = notification.text;
+            document.getElementById('notificationTime').textContent = notification.time;
+            
+            popup.classList.add('show');
+            
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 5000);
+            
+            notificationIndex = (notificationIndex + 1) % notifications.length;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            generateTicker();
+            generateLivePrices();
+            
+            // Update prices every 5 seconds
+            setInterval(updatePrices, 5000);
+            
+            // Show notifications every 15 seconds
+            setTimeout(showNotification, 3000);
+            setInterval(showNotification, 15000);
+            
+            // Newsletter form
+            document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Thank you for subscribing! You will receive our latest updates.');
+                this.reset();
+            });
+        });
+    </script>
 </body>
 </html>

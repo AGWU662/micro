@@ -2,11 +2,18 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import TemplateView
+from core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('', views.home, name='home'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('dashboard/wallet/', views.wallet_view, name='wallet'),
+    path('dashboard/trading/', views.trading_view, name='trading'),
+    path('dashboard/mining/', views.mining_view, name='mining'),
+    path('dashboard/p2p/', views.p2p_view, name='p2p'),
+    path('dashboard/profile/', views.profile_view, name='profile'),
+    path('newsletter/subscribe/', views.newsletter_subscribe, name='newsletter_subscribe'),
 ]
 
 # Serve media files in development

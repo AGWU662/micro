@@ -1,0 +1,156 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Profile{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- Profile Info -->
+    <div class="col-lg-4">
+        <div class="data-card mb-4">
+            <div class="data-card-body text-center">
+                <div class="user-avatar mx-auto mb-3" style="width:80px;height:80px;font-size:2rem;">
+                    {{ user.username|slice:":1"|upper }}
+                </div>
+                <h4>{{ user.get_full_name|default:user.username }}</h4>
+                <p class="text-muted">{{ user.email }}</p>
+                <div class="d-flex justify-content-center gap-2 mb-3">
+                    {% if profile.is_verified %}
+                    <span class="badge badge-success"><i class="fas fa-check me-1"></i>Verified</span>
+                    {% else %}
+                    <span class="badge badge-warning"><i class="fas fa-clock me-1"></i>Unverified</span>
+                    {% endif %}
+                    {% if profile.two_factor_enabled %}
+                    <span class="badge badge-info"><i class="fas fa-shield-alt me-1"></i>2FA</span>
+                    {% endif %}
+                </div>
+                <p class="text-muted small">
+                    Member since {{ user.date_joined|date:"F Y" }}
+                </p>
+            </div>
+        </div>
+        
+        <!-- Referral Code -->
+        <div class="data-card">
+            <div class="data-card-header">
+                <h5><i class="fas fa-gift me-2"></i>Referral Program</h5>
+            </div>
+            <div class="data-card-body">
+                <p class="text-muted small">Share your referral code and earn rewards!</p>
+                <div class="input-group">
+                    <input type="text" class="form-control bg-dark text-white border-secondary" value="{{ profile.referral_code }}" readonly>
+                    <button class="btn btn-primary-gradient" onclick="navigator.clipboard.writeText('{{ profile.referral_code }}')">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Settings -->
+    <div class="col-lg-8">
+        <!-- Personal Info -->
+        <div class="data-card mb-4">
+            <div class="data-card-header">
+                <h5><i class="fas fa-user me-2"></i>Personal Information</h5>
+                <button class="btn btn-sm btn-primary-gradient">Edit</button>
+            </div>
+            <div class="data-card-body">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">First Name</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" value="{{ user.first_name }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Last Name</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" value="{{ user.last_name }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Email</label>
+                            <input type="email" class="form-control bg-dark text-white border-secondary" value="{{ user.email }}" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Phone</label>
+                            <input type="tel" class="form-control bg-dark text-white border-secondary" value="{{ profile.phone }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Country</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" value="{{ profile.country }}">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary-gradient mt-3">Save Changes</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- KYC Status -->
+        <div class="data-card mb-4">
+            <div class="data-card-header">
+                <h5><i class="fas fa-id-card me-2"></i>KYC Verification</h5>
+            </div>
+            <div class="data-card-body">
+                {% if kyc %}
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="icon" style="width:50px;height:50px;border-radius:12px;background:var(--primary-gradient);display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold">{{ kyc.full_name }}</div>
+                        <div class="text-muted small">{{ kyc.get_document_type_display }}</div>
+                    </div>
+                    <div class="ms-auto">
+                        <span class="badge {% if kyc.status == 'approved' %}badge-success{% elif kyc.status == 'pending' %}badge-warning{% else %}badge-danger{% endif %}">
+                            {{ kyc.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                {% if kyc.status == 'rejected' and kyc.rejection_reason %}
+                <div class="alert alert-danger">
+                    <strong>Rejection Reason:</strong> {{ kyc.rejection_reason }}
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-id-card fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Complete KYC verification to unlock all features</p>
+                    <button class="btn btn-primary-gradient">Start Verification</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Security Settings -->
+        <div class="data-card">
+            <div class="data-card-header">
+                <h5><i class="fas fa-shield-alt me-2"></i>Security Settings</h5>
+            </div>
+            <div class="data-card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+                    <div>
+                        <div class="fw-bold">Two-Factor Authentication</div>
+                        <div class="text-muted small">Add an extra layer of security to your account</div>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" {% if profile.two_factor_enabled %}checked{% endif %}>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+                    <div>
+                        <div class="fw-bold">Change Password</div>
+                        <div class="text-muted small">Update your account password</div>
+                    </div>
+                    <button class="btn btn-outline-light btn-sm">Change</button>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-bold">Login History</div>
+                        <div class="text-muted small">View your recent login activity</div>
+                    </div>
+                    <button class="btn btn-outline-light btn-sm">View</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

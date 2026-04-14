@@ -1,0 +1,152 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Wallets{% endblock %}
+{% block page_title %}Wallet Management{% endblock %}
+
+{% block content %}
+<!-- Total Balance -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="stat-card text-center py-4">
+            <div class="label mb-2">Total Portfolio Value</div>
+            <div class="value" style="font-size: 2.5rem;">${{ total_value|floatformat:2 }}</div>
+            <div class="mt-3">
+                <button class="btn btn-primary-gradient me-2">
+                    <i class="fas fa-arrow-down me-2"></i>Deposit
+                </button>
+                <button class="btn btn-outline-light">
+                    <i class="fas fa-arrow-up me-2"></i>Withdraw
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Wallets Grid -->
+    <div class="col-lg-8">
+        <div class="data-card">
+            <div class="data-card-header">
+                <h5><i class="fas fa-wallet me-2"></i>Your Wallets</h5>
+            </div>
+            <div class="data-card-body">
+                <div class="row g-3">
+                    {% for item in wallets %}
+                    <div class="col-md-6">
+                        <div class="wallet-card">
+                            <div class="wallet-icon {{ item.wallet.currency|lower }}">
+                                {% if item.wallet.currency == 'BTC' %}₿{% elif item.wallet.currency == 'ETH' %}Ξ{% elif item.wallet.currency == 'USDT' %}₮{% else %}{{ item.wallet.currency|slice:":1" }}{% endif %}
+                            </div>
+                            <div class="wallet-info">
+                                <div class="name">{{ item.wallet.get_currency_display }}</div>
+                                <div class="balance">{{ item.wallet.balance|floatformat:8 }} {{ item.wallet.currency }}</div>
+                            </div>
+                            <div class="wallet-value">
+                                <div class="usd">${{ item.value|floatformat:2 }}</div>
+                                <div class="crypto">${{ item.price|floatformat:2 }}/coin</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-5 text-muted">
+                        <i class="fas fa-wallet fa-4x mb-3"></i>
+                        <p class="mb-3">No wallets created yet</p>
+                        <button class="btn btn-primary-gradient">Create Wallet</button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="col-lg-4">
+        <div class="data-card mb-4">
+            <div class="data-card-header">
+                <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="data-card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary-gradient">
+                        <i class="fas fa-qrcode me-2"></i>Receive Crypto
+                    </button>
+                    <button class="btn btn-outline-light">
+                        <i class="fas fa-paper-plane me-2"></i>Send Crypto
+                    </button>
+                    <button class="btn btn-outline-light">
+                        <i class="fas fa-exchange-alt me-2"></i>Swap Coins
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="data-card">
+            <div class="data-card-header">
+                <h5><i class="fas fa-info-circle me-2"></i>Deposit Info</h5>
+            </div>
+            <div class="data-card-body">
+                <p class="text-muted small">
+                    To deposit cryptocurrency, select a wallet above and use the generated address. 
+                    Always verify the network before sending.
+                </p>
+                <ul class="text-muted small ps-3">
+                    <li>Minimum deposit: 0.0001 BTC</li>
+                    <li>Confirmations required: 3</li>
+                    <li>No deposit fees</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Transaction History -->
+<div class="data-card mt-4">
+    <div class="data-card-header">
+        <h5><i class="fas fa-history me-2"></i>Transaction History</h5>
+    </div>
+    <div class="data-card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-dark-custom mb-0">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Currency</th>
+                        <th>Amount</th>
+                        <th>Fee</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in transactions %}
+                    <tr>
+                        <td>
+                            <span class="badge {% if tx.type == 'deposit' %}badge-success{% elif tx.type == 'withdrawal' %}badge-warning{% else %}badge-info{% endif %}">
+                                {{ tx.get_type_display }}
+                            </span>
+                        </td>
+                        <td>{{ tx.currency }}</td>
+                        <td>
+                            <span class="{% if tx.amount > 0 %}text-success{% else %}text-danger{% endif %}">
+                                {% if tx.amount > 0 %}+{% endif %}{{ tx.amount|floatformat:8 }}
+                            </span>
+                        </td>
+                        <td class="text-muted">{{ tx.fee|floatformat:8 }}</td>
+                        <td>
+                            <span class="badge {% if tx.status == 'completed' %}badge-success{% elif tx.status == 'pending' %}badge-warning{% else %}badge-danger{% endif %}">
+                                {{ tx.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="text-muted">{{ tx.created_at|date:"M d, Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">No transactions yet</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
