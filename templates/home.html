@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoTrade - Your Gateway to Crypto Trading</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --dark-bg: #0f0f23;
+            --card-bg: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --accent: #00d4ff;
+            --success: #00ff88;
+            --warning: #ffd700;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, #0f0f23, #1a1a2e, #16213e);
+        }
+        
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23667eea' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: rgba(15, 15, 35, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+        }
+        
+        .nav-link:hover {
+            color: var(--accent) !important;
+        }
+        
+        .btn-glow {
+            background: var(--primary-gradient);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+            color: white;
+        }
+        
+        .btn-outline-glow {
+            border: 2px solid #667eea;
+            background: transparent;
+            padding: 0.7rem 2rem;
+            border-radius: 50px;
+            color: #667eea;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-glow:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 6rem 0;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero h1 span {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        /* Crypto Ticker */
+        .crypto-ticker {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        
+        .ticker-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .ticker-item:last-child {
+            border-bottom: none;
+        }
+        
+        .coin-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .coin-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .btc { background: linear-gradient(135deg, #f7931a, #ff9500); }
+        .eth { background: linear-gradient(135deg, #627eea, #8c9eff); }
+        .usdt { background: linear-gradient(135deg, #26a17b, #50c878); }
+        .bnb { background: linear-gradient(135deg, #f3ba2f, #ffd700); }
+        
+        .price-up { color: var(--success); }
+        .price-down { color: #ff4757; }
+        
+        /* Features Section */
+        .features {
+            padding: 6rem 0;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-gradient);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .feature-card h4 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+        }
+        
+        /* Stats Section */
+        .stats {
+            padding: 4rem 0;
+            background: linear-gradient(180deg, transparent, rgba(102, 126, 234, 0.1));
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--card-bg);
+            padding: 3rem 0;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        
+        footer p {
+            color: var(--text-secondary);
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-coins me-2"></i>CryptoTrade
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#trading">Trading</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#mining">Mining</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#p2p">P2P</a></li>
+                </ul>
+                <div class="d-flex gap-2">
+                    <a href="/admin/login/" class="btn btn-outline-glow">Login</a>
+                    <a href="/admin/" class="btn btn-glow">Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1>Trade Crypto with <span>Confidence</span></h1>
+                    <p>Experience the future of cryptocurrency trading. Buy, sell, and trade digital assets with our secure and intuitive platform.</p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="/admin/" class="btn btn-glow btn-lg">
+                            <i class="fas fa-rocket me-2"></i>Start Trading
+                        </a>
+                        <a href="#features" class="btn btn-outline-glow btn-lg">
+                            <i class="fas fa-play me-2"></i>Learn More
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="crypto-ticker float-animation">
+                        <h5 class="mb-4"><i class="fas fa-chart-line me-2"></i>Live Prices</h5>
+                        <div class="ticker-item">
+                            <div class="coin-info">
+                                <div class="coin-icon btc">₿</div>
+                                <div>
+                                    <strong>Bitcoin</strong>
+                                    <small class="d-block text-muted">BTC</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <strong>$67,245.00</strong>
+                                <small class="d-block price-up">+2.34%</small>
+                            </div>
+                        </div>
+                        <div class="ticker-item">
+                            <div class="coin-info">
+                                <div class="coin-icon eth">Ξ</div>
+                                <div>
+                                    <strong>Ethereum</strong>
+                                    <small class="d-block text-muted">ETH</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <strong>$3,456.78</strong>
+                                <small class="d-block price-up">+1.89%</small>
+                            </div>
+                        </div>
+                        <div class="ticker-item">
+                            <div class="coin-info">
+                                <div class="coin-icon usdt">₮</div>
+                                <div>
+                                    <strong>Tether</strong>
+                                    <small class="d-block text-muted">USDT</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <strong>$1.00</strong>
+                                <small class="d-block text-muted">+0.01%</small>
+                            </div>
+                        </div>
+                        <div class="ticker-item">
+                            <div class="coin-info">
+                                <div class="coin-icon bnb">B</div>
+                                <div>
+                                    <strong>BNB</strong>
+                                    <small class="d-block text-muted">BNB</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <strong>$598.45</strong>
+                                <small class="d-block price-down">-0.56%</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose <span style="color: #667eea;">CryptoTrade</span></h2>
+            <div class="row g-4">
+                <div class="col-md-4" id="trading">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <h4>Spot Trading</h4>
+                        <p>Trade cryptocurrencies instantly with market and limit orders. Low fees and high liquidity.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" id="mining">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <h4>Cloud Mining</h4>
+                        <p>Mine Bitcoin and other cryptocurrencies without expensive hardware. Earn daily returns.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" id="p2p">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4>P2P Trading</h4>
+                        <p>Buy and sell directly with other users. Multiple payment methods with escrow protection.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <h4>Secure Wallets</h4>
+                        <p>Multi-currency wallets with advanced security. Store BTC, ETH, USDT, and more.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>KYC Verified</h4>
+                        <p>Enhanced security with identity verification. Protect your assets with 2FA.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h4>24/7 Support</h4>
+                        <p>Round-the-clock customer support. Get help whenever you need it.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">$50M+</div>
+                        <div class="stat-label">Trading Volume</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">100K+</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Cryptocurrencies</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">99.9%</div>
+                        <div class="stat-label">Uptime</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="py-5">
+        <div class="container text-center">
+            <h2 class="mb-4">Ready to Start Trading?</h2>
+            <p class="text-muted mb-4">Join thousands of traders who trust CryptoTrade</p>
+            <a href="/admin/" class="btn btn-glow btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Get Started Now
+            </a>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p class="mb-2">
+                <i class="fas fa-coins me-2"></i>CryptoTrade Platform
+            </p>
+            <p class="small">&copy; 2026 CryptoTrade. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
