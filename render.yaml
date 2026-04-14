@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: cryptoplatform
+    env: python
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn cryptoplatform.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: cryptoplatform.onrender.com,.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cryptoplatform-db
+          property: connectionString
+      - key: CLOUDINARY_URL
+        value: cloudinary://688661857792261:LGe4IdMIbnhTE_4FYFgkwanf5Qo@dgo9rlph6
+      - key: CLOUDINARY_CLOUD_NAME
+        value: dgo9rlph6
+      - key: CLOUDINARY_API_KEY
+        value: "688661857792261"
+      - key: CLOUDINARY_API_SECRET
+        value: LGe4IdMIbnhTE_4FYFgkwanf5Qo
+
+databases:
+  - name: cryptoplatform-db
+    plan: free
